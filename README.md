@@ -26,7 +26,9 @@ asynchronous JavaScript and help you make the best decisions for your project.
 
 Enjoy!
 
-## Quickload's Law
+## Theory
+
+### Quickload's Law
 
 > The user should *always* be able to interact *meaningfully* with every element
 > on the screen.
@@ -52,8 +54,6 @@ elements are safe to click, but it's certainly not a good user experience.
 We developers tend to develop locally or on fast connections so we rarely
 think about it. With Quickload I want to change that.
 
-Let's have a look at the law again:
-
 > The user should *always* be able to interact *meaningfully* with every element
 > on the screen.
 
@@ -61,4 +61,65 @@ What does *meaningfully* mean? A user can tolerate to wait as long you
 *communicate* that it's only going to take a (mili)second. That's meaningful
 enough for me.
 
+### Strategies
+
+How can we load JavaScript asynchronously and yet obey the law? Let's have a
+look at various strategies.
+
+#### Graceful Degradation or Progressive Enhancement
+
+The simplest solution is to make it work without JavaScript. It's
+simplest in the sense that it allows you to load all your JavaScript
+asynchronously without really worrying about anything. It might not
+always be *easy* though. You can accomplish a lot with plain HTML
+and CSS these days, but certain things are still pretty hard without
+JavaScript.
+
+Try to solve it without JavaScript, but don't fret if it's too complex. We
+have other strategies.
+
+#### Start in disabled state
+
+Another solution is to write the HTML and CSS such that the elements **start
+in a disabled state**. When the JavaScript finally loads it "upgrades" them
+into the active state. It's not the best user experience, but giving the user
+a read-only experience is far better than a broken experience. With this
+approach the users can still explore the page (with their eyes) while it's
+loading.
+
+#### Solve it in JavaScript with no dependencies
+
+It's always a pleasure to work with jQuery, but sometimes the best solution
+is to get dirty and write old-fashioned JavaScript with no dependencies. Get
+our of your comfort zone, write a few kilobytes of JavaScript and stick in
+`<head>`. There's nothing wrong with that.
+
+You can either use `onclick`-attributes to hook it up (it's surprisingly
+effective) or implement delegates (we'll come back to this in the
+Practice-section).
+
+#### Queue actions
+
+[Flickr uses a fascinating strategy][flickr-async]: If you can't make it, fake
+it! Like in the previous approach you implement something in plain JavaScript
+and place it in `<head>`, but this time you just fake it. If the user clicks
+a favorite button (before the full JavaScript is loaded), it merely *records*
+that a favorite acction has occured, and sets the class to "loading". When the
+asynchronous JavaScript kicks in, it completes the job.
+
+From a user's point of view, the favorite action is just taking a bit longer,
+while the page itself remains responsive.
+
+#### Load scripts on demand
+
+If you already have the ability to queue up actions, why bother loading the
+JavaScript on page load? Instead you can just load it on demand. This is
+especially useful if most of your visitors don't use the feature (e.g. most
+people just reads the news and don't use the fancy social media buttons). It's
+also very attractive for users on cellular network or capped connections.
+
+For users who use the feature often, the JavaScript will probably be stored in
+cache and load quickly.
+
+[flickr-async]: http://dailyjs.com/2011/11/28/flickr-async/
 
